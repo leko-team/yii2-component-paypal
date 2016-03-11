@@ -291,7 +291,7 @@ class PayPal extends \yii\base\Component
      * 
      * @return void
      */
-    private function setCurlResponse($response)
+    public function setCurlResponse($response)
     {
         $this->_response = $response;
     }
@@ -301,7 +301,7 @@ class PayPal extends \yii\base\Component
      *  
      * @return array Array of parmas by PayPal response.
      */
-    private function getCurlResponse()
+    public function getCurlResponse()
     {   
         return $this->_response;
     }
