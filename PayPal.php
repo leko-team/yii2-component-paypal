@@ -8,43 +8,6 @@ use yii\base\InvalidConfigException;
 
 /**
  * PayPal payment system component for Yii2 framework.
- *     Installation
- *         Install curl:
- *             $ sudo apt-get install libcurl3 php5-curl
- *             
- *         Add to your "main.php" config file this part with component params:
- *             
- *             'components' => [
- *                 'lekoPayPal' => [
- *                     'class'  => 'leko\components\paypal\PayPal',
- *                     'config' => [
- *                         'returnUrl' => '/controller/action',
- *                         'cancelUrl' => '/controller/action',
- *                         'version'   => XXX.X,    // PayPal API version (e.g. 124.0)
- *                     ],
- *                 ],
- *             ],
- *
- *         Add to your "main-local.php" config file this part with required params:
- *             
- *             'components' => [
- *                 'lekoPayPal' => [
- *                     'config' => [
- *                         'user'      => 'your_user_id',
- *                         'password'  => 'your_password',
- *                         'signature' => 'your_signature', 
- *                         'mode'      => 'payment_mode',   // 'sandbox' or 'live'
- *                     ],
- *                 ],
- *             ],
- *
- *         In "config" section you may add some non-required params:
- *             'url'         - payment system url for curl request,
- *                             def. 'api-3t.sandbox.paypal.com/nvp',
- *             'checkoutUrl' - payment system redirect url for pay on PayPal site from client account or created account,
- *                             def. 'www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=',
- *             'timeout'     - timeout for curl request to payment system (sec),
- *                             def. 0 (sec),
  */
 class PayPal extends \yii\base\Component
 {
@@ -364,7 +327,7 @@ class PayPal extends \yii\base\Component
      * 
      * @return string|null Token.
      */
-    private function getToken()
+    public function getToken()
     {
         $this->setToken();
         return $this->_token;
@@ -410,20 +373,6 @@ class PayPal extends \yii\base\Component
         return [
             self::ACTION_SALE,
         ];   
-    }
-
-    /**
-     * Get payment system supported currencies codes.
-     * 
-     * @return array
-     */
-    private static function getSupportedCurencies()
-    {
-        return [
-            'AUD', 'BRL', 'CAD', 'CZK', 'DKK', 'EUR', 'HKD', 'HUF', 'ILS', 'JPY', 'MYR', 'MXN',
-            'NOK', 'NZD', 'PHP', 'PLN', 'GBP', 'RUB', 'SGD', 'SEK', 'CHF', 'TWD', 'THB', 'TRY', 
-            'USD',
-        ];
     }
 
     /**
@@ -522,9 +471,6 @@ class PayPal extends \yii\base\Component
      */
     public function completeTransaction($token = null, $payerID = null, $amount)
     {
-        $token = $this->getToken();
-        $payerID = 'H9QP8VUTGKS3A';
-
         if ($token && $payerID) {
             $postfields = self::buildQuery([
                 'USER' => $this->user,
@@ -542,5 +488,19 @@ class PayPal extends \yii\base\Component
             $this->createCurlRequest($postfields);
             return $this;
         }
+    }
+
+    /**
+     * Get payment system supported currencies codes.
+     * 
+     * @return array
+     */
+    public static function getSupportedCurencies()
+    {
+        return [
+            'AUD', 'BRL', 'CAD', 'CZK', 'DKK', 'EUR', 'HKD', 'HUF', 'ILS', 'JPY', 'MYR', 'MXN',
+            'NOK', 'NZD', 'PHP', 'PLN', 'GBP', 'RUB', 'SGD', 'SEK', 'CHF', 'TWD', 'THB', 'TRY', 
+            'USD',
+        ];
     }
 }
