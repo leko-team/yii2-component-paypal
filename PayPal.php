@@ -41,7 +41,7 @@ class PayPal extends \yii\base\Component
     /**
      * Others.
      */
-    const DEFAULT_CURRENCY_CODE = 'RUB';
+    const DEFAULT_CURRENCY_CODE = 'USD';
     const DEFAULT_TIMEOUT = 0;
 
     /**
@@ -427,8 +427,7 @@ class PayPal extends \yii\base\Component
      */
     public function approvalPayment()
     {
-        $token = $this->getToken();
-        if ($token) {
+        if (($token = $this->getToken())) {
             $checkoutUrl = $this->checkoutUrl . $token;
             return Yii::$app->response->redirect($checkoutUrl);
         }
@@ -444,7 +443,6 @@ class PayPal extends \yii\base\Component
      */
     public function getApprovedPaymentDetails($token = null)
     {
-        $token = $this->getToken();
         if ($token) {
             $postfields = self::buildQuery([
                 'USER' => $this->user,
@@ -469,8 +467,12 @@ class PayPal extends \yii\base\Component
      * 
      * @return leko\components\paypal\PayPal
      */
-    public function completeTransaction($token = null, $payerID = null, $amount)
+    public function completeTransaction($token = null, $payerID = null, $amount = null, $currencyCode = null)
     {
+        if (is_null($amount))
+            throw new InvalidArgumentException('Current argument "amount" must be not-null!');
+        if (is_null($currencyCode))
+            $currencyCode = self::DEFAULT_CURRENCY_CODE;
         if ($token && $payerID) {
             $postfields = self::buildQuery([
                 'USER' => $this->user,
@@ -482,7 +484,7 @@ class PayPal extends \yii\base\Component
                 'PAYERID' => $payerID,
                 'PAYMENTREQUEST_0_PAYMENTACTION' => self::ACTION_SALE,
                 'PAYMENTREQUEST_0_AMT' => $amount,
-                'PAYMENTREQUEST_0_CURRENCYCODE' => self::DEFAULT_CURRENCY_CODE,
+                'PAYMENTREQUEST_0_CURRENCYCODE' => $currencyCode,
             ]);
 
             $this->createCurlRequest($postfields);
