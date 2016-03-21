@@ -5,6 +5,7 @@ use Yii;
 use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\base\InvalidConfigException;
+use InvalidArgumentException;
 
 /**
  * PayPal payment system component for Yii2 framework.
@@ -14,8 +15,8 @@ class PayPal extends \yii\base\Component
     /**
      * Mods.
      */
-    const MODE_SANDBOX = 'sandbox';
-    const MODE_LIVE = 'live';
+    const MODE_SANDBOX  = 'sandbox';
+    const MODE_LIVE     = 'live';
 
     /**
      * Actions.
@@ -25,24 +26,24 @@ class PayPal extends \yii\base\Component
     /**
      * Urls.
      */
-    const DEFAULT_URL_SANDBOX = 'api-3t.sandbox.paypal.com/nvp';
-    const DEFAULT_URL_LIVE = 'api-3t.sandbox.paypal.com/nvp';
-    const DEFAULT_CHECKOUT_URL_SANDBOX = 'www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=';
-    const DEFAULT_CHECKOUT_URL_LIVE = 'www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=';
+    const DEFAULT_URL_SANDBOX           = 'api-3t.sandbox.paypal.com/nvp';
+    const DEFAULT_URL_LIVE              = 'api-3t.sandbox.paypal.com/nvp';
+    const DEFAULT_CHECKOUT_URL_SANDBOX  = 'www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=';
+    const DEFAULT_CHECKOUT_URL_LIVE     = 'www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=';
     
     /**
      * Methods.
      */
-    const METHOD_SET_EXPRESS_CHECKOUT = 'SetExpressCheckout';
-    const METHOD_SET_EXPRESS_CHECKOUT_PAYMENT = 'SetExpressCheckoutPayment';
-    const METHOD_GET_EXPRESS_CHECKOUT_DETAILS = 'GetExpressCheckoutDetails';
-    const METHOD_DO_EXPRESS_CHECKOUT_PAYMENT = 'DoExpressCheckoutPayment';
+    const METHOD_SET_EXPRESS_CHECKOUT           = 'SetExpressCheckout';
+    const METHOD_SET_EXPRESS_CHECKOUT_PAYMENT   = 'SetExpressCheckoutPayment';
+    const METHOD_GET_EXPRESS_CHECKOUT_DETAILS   = 'GetExpressCheckoutDetails';
+    const METHOD_DO_EXPRESS_CHECKOUT_PAYMENT    = 'DoExpressCheckoutPayment';
     
     /**
      * Others.
      */
     const DEFAULT_CURRENCY_CODE = 'USD';
-    const DEFAULT_TIMEOUT = 0;
+    const DEFAULT_TIMEOUT       = 0;
 
     /**
      * Array of component params from main config.
@@ -422,16 +423,31 @@ class PayPal extends \yii\base\Component
     }
 
     /**
-     * [approvalPayment description]
-     * @return [type] [description]
+     * Переход на PayPal для проведения платежа.
+     * 
+     * @return mixed
      */
     public function approvalPayment()
     {
-        if (($token = $this->getToken())) {
-            $checkoutUrl = $this->checkoutUrl . $token;
-            return Yii::$app->response->redirect($checkoutUrl);
+        if ($token = $this->getToken()) {
+            if ($url = $this->createCheckoutUrl($token))
+                return Yii::$app->response->redirect($url);
         }
         return false;
+    }
+
+    /**
+     * Создать адрес для редиректа пользователя в PayPal для оплаты.
+     * 
+     * @param  string $token Токен ключ с PayPal
+     * 
+     * @return string Url 
+     */
+    public function createCheckoutUrl($token = null)
+    {
+        if (is_string($token))
+            return $this->checkoutUrl . $token;
+        throw new InvalidArgumentException("Token is null or not string!");
     }
 
     /**
