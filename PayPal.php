@@ -27,9 +27,9 @@ class PayPal extends \yii\base\Component
      * Urls.
      */
     const DEFAULT_URL_SANDBOX           = 'api-3t.sandbox.paypal.com/nvp';
-    const DEFAULT_URL_LIVE              = 'api-3t.sandbox.paypal.com/nvp';
+    const DEFAULT_URL_LIVE              = 'api-3t.paypal.com/nvp';
     const DEFAULT_CHECKOUT_URL_SANDBOX  = 'www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=';
-    const DEFAULT_CHECKOUT_URL_LIVE     = 'www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=';
+    const DEFAULT_CHECKOUT_URL_LIVE     = 'www.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=';
     
     /**
      * Methods.
