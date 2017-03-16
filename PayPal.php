@@ -414,7 +414,7 @@ class PayPal extends \yii\base\Component
             'L_PAYMENTREQUEST_0_NAME0' => Yii::t('frontend', 'Пополнение счета'),
             'L_PAYMENTREQUEST_0_AMT0' => $amount,
             'L_PAYMENTREQUEST_0_QTY0' => 1,
-            'L_PAYMENTREQUEST_0_ITEMCATEGORY0' => 'Digital',
+            'L_PAYMENTREQUEST_0_ITEMCATEGORY0' => 'Physical',
             'ALLOWNOTE' => 1,
         ]);
 
